@@ -15,6 +15,7 @@ function SingleFeedbackPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [feedBack, setFeedBacks] = useState([])
 
 
   const isMentor = true;
@@ -35,11 +36,25 @@ function SingleFeedbackPage() {
         console.error("Error fetching feedback:", error);
       }
     };
-
     fetchData();
   }, []);
 
-  console.log(data)
+
+  useEffect(()=>{
+    const fetchFeedbacks = async () =>{
+       const response = await axios.get(
+        `http://localhost:5001/api/feedback/getMentorFeedback/${id}`,
+        {
+          withCredentials: true,
+        }
+       )
+       setFeedBacks(response.data.data)
+    }
+
+    fetchFeedbacks()
+  }, [])
+
+  console.log(feedBack)
 
   const handleGoToDashboard = () => {
     const isMentor = true;
@@ -69,7 +84,7 @@ function SingleFeedbackPage() {
               Link to exercise: <a href={data.codeLink}>{data.codeLink}</a>
             </Text>
             <Text>{formatCreatedAt(data.createdAt)}</Text>
-            
+
             {data.whoisAssigned ? (
               <Text>Assigned to: {data.whoisAssigned}</Text>
             ) : null}
@@ -85,6 +100,14 @@ function SingleFeedbackPage() {
           </Stack>
         </Paper>
       </div>
+
+      {feedBack.map((item, index)=>{
+          return(
+            <Paper key={index}>
+              <Text>{item.feedback}</Text>
+            </Paper>
+          )
+      })}
 
       {isMentor && (
         <Paper shadow="xs" p="sm" withBorder>

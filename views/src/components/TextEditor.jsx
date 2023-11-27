@@ -18,6 +18,7 @@ function TextEditor({ isMentor}) {
 
   const handleSubmit = () => {
     setSubmittedContent(editorContent);
+    editor.content = "";
   };
 
   return (
@@ -29,10 +30,8 @@ function TextEditor({ isMentor}) {
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />
-            <RichTextEditor.Underline />
             <RichTextEditor.Strikethrough />
             <RichTextEditor.ClearFormatting />
-            <RichTextEditor.Highlight />
             <RichTextEditor.Code />
           </RichTextEditor.ControlsGroup>
 
@@ -47,9 +46,6 @@ function TextEditor({ isMentor}) {
             <RichTextEditor.Blockquote />
             <RichTextEditor.Hr />
             <RichTextEditor.BulletList />
-            <RichTextEditor.OrderedList />
-            <RichTextEditor.Subscript />
-            <RichTextEditor.Superscript />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
@@ -57,12 +53,6 @@ function TextEditor({ isMentor}) {
             <RichTextEditor.Unlink />
           </RichTextEditor.ControlsGroup>
 
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.AlignLeft />
-            <RichTextEditor.AlignCenter />
-            <RichTextEditor.AlignJustify />
-            <RichTextEditor.AlignRight />
-          </RichTextEditor.ControlsGroup>
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />

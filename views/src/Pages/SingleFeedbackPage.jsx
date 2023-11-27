@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Text, Container, Paper, Stack, Button } from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { fetchFeedBackOnFeedbackRequestForm } from "../features/Feedbacks/feedbackSlice";
 import axios from "axios";
 import TextEditor from "../components/TextEditor";
 import formatCreatedAt from "../Utility/DateFormatter";
@@ -12,20 +13,21 @@ const feedbackContainer = {
 };
 
 function SingleFeedbackPage() {
-  const { id } = useParams();
+  const { feedbackrequestId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [data, setData] = useState([]);
-  const [feedBack, setFeedBacks] = useState([])
-
+  const [feedBack, setFeedBacks] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [loadingFeedback, setLoadingFeedback] = useState(true);
 
   const isMentor = true;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Make the API call using axios
         const response = await axios.get(
-          `http://localhost:5001/api/feedback/getfeedbackid/${id}`,
+          `http://localhost:5001/api/feedback/getfeedbackid/${feedbackrequestId}`,
           {
             withCredentials: true,
           }
@@ -36,25 +38,32 @@ function SingleFeedbackPage() {
         console.error("Error fetching feedback:", error);
       }
     };
+
     fetchData();
-  }, []);
+  }, [feedbackrequestId]);
 
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await dispatch(fetchFeedBackOnFeedbackRequestForm(feedbackrequestId));
+        setFeedBacks(response.payload);
+        setLoadingFeedback(false); 
+        setLoadingData(false)
+      } catch (error) {
+        console.error("Error fetching feedbacks on requests:", error);
+        setLoadingFeedback(false); 
+        setLoadingData(false)
+      }
+    };
 
-  useEffect(()=>{
-    const fetchFeedbacks = async () =>{
-       const response = await axios.get(
-        `http://localhost:5001/api/feedback/getMentorFeedback/${id}`,
-        {
-          withCredentials: true,
-        }
-       )
-       setFeedBacks(response.data.data)
+    fetchFeedbacks();
+  }, [dispatch, feedbackrequestId]);
+
+  useEffect(() => {
+    if (!loadingData && !loadingFeedback) {
+      setLoadingData(false);
     }
-
-    fetchFeedbacks()
-  }, [])
-
-  console.log(feedBack)
+  }, [loadingData, loadingFeedback]);
 
   const handleGoToDashboard = () => {
     const isMentor = true;
@@ -64,6 +73,8 @@ function SingleFeedbackPage() {
       navigate("/intern/myrequests");
     }
   };
+
+  console.log(feedBack.data)
 
   return (
     <Container>
@@ -76,18 +87,12 @@ function SingleFeedbackPage() {
         >
           <div>
             <Text>Intern Name: {data.studentName}</Text>
-            <Text>
-              Topic Of Learning Session: {data.topicOfLearningSession}
-            </Text>
+            <Text>Topic Of Learning Session: {data.topicOfLearningSession}</Text>
             <Text>Completed: {data.status ? "Yes" : "No"}</Text>
             <Text>
               Link to exercise: <a href={data.codeLink}>{data.codeLink}</a>
             </Text>
             <Text>{formatCreatedAt(data.createdAt)}</Text>
-
-            {data.whoisAssigned ? (
-              <Text>Assigned to: {data.whoisAssigned}</Text>
-            ) : null}
           </div>
           <Stack direction="horizontal" spacing="sm">
             <Button
@@ -101,13 +106,15 @@ function SingleFeedbackPage() {
         </Paper>
       </div>
 
-      {feedBack.map((item, index)=>{
-          return(
-            <Paper key={index}>
-              <Text>{item.feedback}</Text>
-            </Paper>
-          )
-      })}
+      {loadingData || loadingFeedback ? (
+        <Text>Loading...</Text>
+      ) : (
+        feedBack.data.map((item, index) => (
+          <div key={index}>
+            <Paper>{item.feedback}</Paper>
+          </div>
+        ))
+      )}
 
       {isMentor && (
         <Paper shadow="xs" p="sm" withBorder>

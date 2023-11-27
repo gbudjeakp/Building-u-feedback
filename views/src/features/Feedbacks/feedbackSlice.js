@@ -4,31 +4,63 @@ import axios from "axios";
 const initialState = {
   feedbackRequests: [],
   assignedFeedbackRequests: [],
-  selectedFeedback: null,
+  feedbacksOnRequests: [], 
   loading: "idle",
   error: null,
 };
 
-const createAsyncThunkWithJwt = (type, url, method = "get") => createAsyncThunk(type, async (id, thunkAPI) => {
-  try {
-    const response = await axios({
-      method,
-      url: id ? `${url}${id}` : url,
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
+const createAsyncThunkWithJwt = (type, url, method = "get") =>
+  createAsyncThunk(type, async (id, thunkAPI) => {
+    try {
+      const response = await axios({
+        method,
+        url: id ? `${url}${id}` : url,
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  });
 
-const createFeedbackRequest = createAsyncThunkWithJwt("feedback/create", "http://localhost:5001/api/feedback/submitfeedback", "post");
-const addFeedback = createAsyncThunkWithJwt("feedback/add", "http://localhost:5001/api/feedback/add", "post");
-const assignFeedbackRequest = createAsyncThunkWithJwt("feedback/assign", "http://localhost:5001/api/feedback/assignFeedBackToMentor/", "post");
-const getAssignedFeedbackRequests = createAsyncThunkWithJwt("feedback/getAssign", "http://localhost:5001/api/feedback/getAssignedFeedBacks");
-const fetchFeedbackRequests = createAsyncThunkWithJwt("feedback/fetchAll", "http://localhost:5001/api/feedback/getfeedbackrequestForms");
-const getSelectedFeedbackRequest = createAsyncThunk('feedback/getSelectedRequest', "http://localhost:5001/api/feedback/getfeedbackid/"); 
-const markComplete = createAsyncThunkWithJwt("feedback/markComplete", "http://localhost:5001/api/feedback/markFeedBackRequestComplete/", "get");
+const createFeedbackRequest = createAsyncThunkWithJwt(
+  "feedback/create",
+  "http://localhost:5001/api/feedback/submitfeedback",
+  "post"
+);
+
+const addFeedback = createAsyncThunkWithJwt(
+  "feedback/add",
+  "http://localhost:5001/api/feedback/addFeedBack/7",
+  "post"
+);
+
+const assignFeedbackRequest = createAsyncThunkWithJwt(
+  "feedback/assign",
+  "http://localhost:5001/api/feedback/assignFeedBackToMentor/",
+  "post"
+);
+
+const getAssignedFeedbackRequests = createAsyncThunkWithJwt(
+  "feedback/getAssign",
+  "http://localhost:5001/api/feedback/getAssignedFeedBacks"
+);
+
+const fetchFeedbackRequests = createAsyncThunkWithJwt(
+  "feedback/fetchAll",
+  "http://localhost:5001/api/feedback/getfeedbackrequestForms"
+);
+
+const fetchFeedBackOnFeedbackRequestForm = createAsyncThunkWithJwt(
+  "feedback/fetchFeedbackOnFeedbackRequestForm",
+  "http://localhost:5001/api/feedback/getMentorFeedback/", // Assuming this 
+);
+
+const markComplete = createAsyncThunkWithJwt(
+  "feedback/markComplete",
+  "http://localhost:5001/api/feedback/markFeedBackRequestComplete/",
+  "get"
+);
 
 const feedbackSlice = createSlice({
   name: "feedback",
@@ -45,14 +77,18 @@ const feedbackSlice = createSlice({
       })
       .addCase(addFeedback.fulfilled, (state, action) => {
         const { requestId, feedback } = action.payload;
-        const request = state.feedbackRequests.find((req) => req.id === requestId);
+        const request = state.feedbackRequests.find(
+          (req) => req.id === requestId
+        );
         if (request) {
           request.feedback.push(feedback);
         }
       })
       .addCase(assignFeedbackRequest.fulfilled, (state, action) => {
         const { requestId, mentorId } = action.payload;
-        const request = state.assignedFeedbackRequests.find((req) => req.id === requestId);
+        const request = state.assignedFeedbackRequests.find(
+          (req) => req.id === requestId
+        );
         if (request) {
           request.mentorId = mentorId;
         }
@@ -61,28 +97,36 @@ const feedbackSlice = createSlice({
         state.assignedFeedbackRequests = action.payload;
         state.loading = "succeeded";
       })
-      .addCase(getSelectedFeedbackRequest.fulfilled, (state, action) => {
-        state.selectedFeedback = action.payload;
-        console.log("THis selected feedbackrequest", state.selectedFeedback)
+      .addCase(fetchFeedBackOnFeedbackRequestForm.fulfilled, (state, action) => {
+        state.feedbacksOnRequests = action.payload;
         state.loading = "succeeded";
+      })
+      .addCase(fetchFeedBackOnFeedbackRequestForm.pending, (state) => {
+        state.loading = "loading";
+      })
+      .addCase(fetchFeedBackOnFeedbackRequestForm.rejected, (state, action) => {
+        state.loading = "failed";
+        state.error = action.payload
+          ? action.payload
+          : "Error fetching feedback on feedback request forms.";
       })
       .addCase(getAssignedFeedbackRequests.pending, (state) => {
         state.loading = "loading";
       })
       .addCase(getAssignedFeedbackRequests.rejected, (state, action) => {
         state.loading = "failed";
-        state.error = action.payload ? action.payload : "Error fetching assigned feedback requests.";
-      })
-      .addCase(getSelectedFeedbackRequest.rejected, (state, action) => {
-        state.loading = "failed";
-        state.error = action.payload ? action.payload : "Error fetching selected feedback.";
+        state.error = action.payload
+          ? action.payload
+          : "Error fetching assigned feedback requests.";
       })
       .addCase(fetchFeedbackRequests.pending, (state) => {
         state.loading = "loading";
       })
       .addCase(fetchFeedbackRequests.rejected, (state, action) => {
         state.loading = "failed";
-        state.error = action.payload ? action.payload : "Error fetching feedback requests.";
+        state.error = action.payload
+          ? action.payload
+          : "Error fetching feedback requests.";
       });
   },
 });
@@ -90,10 +134,10 @@ const feedbackSlice = createSlice({
 export {
   fetchFeedbackRequests,
   createFeedbackRequest,
+  fetchFeedBackOnFeedbackRequestForm,
   addFeedback,
   assignFeedbackRequest,
   getAssignedFeedbackRequests,
-  getSelectedFeedbackRequest,
   markComplete,
 };
 

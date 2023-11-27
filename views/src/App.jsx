@@ -8,6 +8,7 @@ import Homepage from "./pages/HomePage";
 import Unauthorized from "./pages/Unauthorized";
 import Notfound from "./pages/Notfound";
 import "@mantine/core/styles.css";
+import "./index.css"
 import { MantineProvider } from "@mantine/core";
 
 
@@ -20,7 +21,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/intern/*" element={<Interndashboard />} />
         <Route path="/mentor/*" element={<Mentordashboard />} />
-        <Route path="/feedback/:id" element={<SingleFeedBack />} />
+        <Route path="/feedback/:feedbackrequestId" element={<SingleFeedBack />} />
         <Route path="/403" element={< Unauthorized />} />
         <Route path="/404" element={< Notfound />} />
       </Routes>

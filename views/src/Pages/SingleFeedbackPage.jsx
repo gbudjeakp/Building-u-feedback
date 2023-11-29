@@ -118,7 +118,7 @@ function SingleFeedbackPage() {
 
       {isMentor && (
         <Paper shadow="xs" p="sm" withBorder>
-          <TextEditor isMentor={true} />
+          <TextEditor isMentor={true} feedbackrequestId={feedbackrequestId}/>
         </Paper>
       )}
     </Container>

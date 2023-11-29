@@ -1,3 +1,5 @@
+// feedbackSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -31,7 +33,7 @@ const createFeedbackRequest = createAsyncThunkWithJwt(
 
 const addFeedback = createAsyncThunkWithJwt(
   "feedback/add",
-  "http://localhost:5001/api/feedback/addFeedBack/7",
+  "http://localhost:5001/api/feedback/addFeedBack/",
   "post"
 );
 
@@ -53,7 +55,7 @@ const fetchFeedbackRequests = createAsyncThunkWithJwt(
 
 const fetchFeedBackOnFeedbackRequestForm = createAsyncThunkWithJwt(
   "feedback/fetchFeedbackOnFeedbackRequestForm",
-  "http://localhost:5001/api/feedback/getMentorFeedback/", // Assuming this 
+  "http://localhost:5001/api/feedback/getMentorFeedback/",
 );
 
 const markComplete = createAsyncThunkWithJwt(
@@ -76,13 +78,14 @@ const feedbackSlice = createSlice({
         state.feedbackRequests.push(action.payload);
       })
       .addCase(addFeedback.fulfilled, (state, action) => {
-        const { requestId, feedback } = action.payload;
-        const request = state.feedbackRequests.find(
-          (req) => req.id === requestId
-        );
-        if (request) {
-          request.feedback.push(feedback);
-        }
+        const { feedbackrequestId, feedback } = action.payload;
+        console.log(action.payload)
+        // const request = state.feedbacksOnRequests.find(
+        //   (req) => req.id === requestId
+        // );
+        // if (request) {
+        //   request.feedback.push(feedback);
+        // }
       })
       .addCase(assignFeedbackRequest.fulfilled, (state, action) => {
         const { requestId, mentorId } = action.payload;
@@ -98,7 +101,9 @@ const feedbackSlice = createSlice({
         state.loading = "succeeded";
       })
       .addCase(fetchFeedBackOnFeedbackRequestForm.fulfilled, (state, action) => {
-        state.feedbacksOnRequests = action.payload;
+        state.feedbacksOnRequests = Array.isArray(action.payload)
+          ? action.payload
+          : [];
         state.loading = "succeeded";
       })
       .addCase(fetchFeedBackOnFeedbackRequestForm.pending, (state) => {
@@ -141,4 +146,4 @@ export {
   markComplete,
 };
 
-export default feedbackSlice.reducer;
+export default feedbackSlice.reducer

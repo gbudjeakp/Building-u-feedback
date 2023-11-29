@@ -1,24 +1,30 @@
 import { useState } from "react";
 import { RichTextEditor, Link } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
+import { useEditor,useCurrentEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
+import { useDispatch } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import { addFeedback } from "../features/Feedbacks/feedbackSlice";
 import { Button, Text } from "@mantine/core";
 
-function TextEditor({ isMentor}) {
-  const [editorContent, setEditorContent] = useState("");
-  const [submittedContent, setSubmittedContent] = useState("");
+function TextEditor({ isMentor, feedbackrequestId}) {
+  const [feedback, setFeedback] = useState("");
+  const dispatch = useDispatch();
 
   const editor = useEditor({
     extensions: [StarterKit, Link],
-    content: editorContent,
+    content: feedback,
     onUpdate({ editor }) {
-      setEditorContent(editor.getHTML());
-    },
+      setFeedback(editor?.getText() || '');
+    }
   });
 
+
   const handleSubmit = () => {
-    setSubmittedContent(editorContent);
-    editor.content = "";
+    editor.commands.insertContent(feedback)
+    dispatch(addFeedback(feedbackrequestId, feedback));
+    editor.commands.setContent("");
+    console.log(feedback);
   };
 
   return (
@@ -66,18 +72,6 @@ function TextEditor({ isMentor}) {
       </Button>
      </div>
     )}
-
-      {submittedContent && (
-        <div style={{ marginTop: "20px" }}>
-          <Text size="xl" weight={700}>
-            Submitted Feedback:
-          </Text>
-          <div
-            dangerouslySetInnerHTML={{ __html: submittedContent }}
-            style={{ border: "1px solid #e1e1e1", padding: "10px" }}
-          />
-        </div>
-      )}
     </>
   );
 }

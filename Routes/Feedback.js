@@ -21,6 +21,6 @@ router.get("/getfeedbackid/:feedbackrequestId", auth, feedbackController.getSele
 
 router.get("/markFeedBackRequestComplete/:feedbackrequestId", auth,  feedbackController.markFeedbackRequestComplete);
 
-
+router.delete("/deleteFeedbackRequest/:feedbackrequestId", auth, feedbackController.deleteFeedbackRequest);
 
 module.exports = router;

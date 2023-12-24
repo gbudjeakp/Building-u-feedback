@@ -111,6 +111,15 @@ const getMentorFeedback = async (req, res) => {
   }
 };
 
+
+/*This controller allows interns to delete selected  feedback request*/
+const deleteFeedbackRequest = async (req, res)=>{
+
+}
+
+
+
+
 //////////////////////////////////////////
 /* Code below here are basically controller functions 
 for the Code leads or mentor endpoints 
@@ -240,7 +249,6 @@ const getAssignedFeedBacks = async (req, res) => {
         },
       },
     });
-    console.log(assignedList);
     res.status(200).json({ data: assignedList });
   } catch (err) {
     console.error(err);
@@ -315,4 +323,5 @@ module.exports = {
   getMentorFeedback,
   getSelectedFeedback,
   markFeedbackRequestComplete,
+  deleteFeedbackRequest 
 };

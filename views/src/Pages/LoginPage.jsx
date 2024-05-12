@@ -35,6 +35,10 @@ function LoginPage() {
     navigate("/signup");
   };
 
+  const navigateToForgotpassword  = ()=>{
+    navigate("/forgotpassword")
+  }
+
   const form = useForm({
     initialValues: { userName: "", password: "" },
 
@@ -130,13 +134,16 @@ function LoginPage() {
 
           <div style={{ marginTop: "1.5rem" }}>
             <Group position="center" align="center" spacing="xs">
-              <Text size="lg" c="dimmed">
-                Don't An Account?
+              <Text size="md" c="dimmed">
+                Don't Have An Account?
               </Text>
-              <Anchor onClick={navigateToLogin} size="lg" component="button">
+              <Anchor onClick={navigateToLogin} size="md" component="button">
                 Sign Up
               </Anchor>
             </Group>
+            <Anchor onClick={navigateToForgotpassword} size="md">
+                Forgot password
+              </Anchor>
           </div>
         </Paper>
       </Center>

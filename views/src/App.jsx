@@ -7,6 +7,7 @@ import SingleFeedBack from "./pages/SingleFeedbackPage";
 import Homepage from "./pages/HomePage";
 import Unauthorized from "./pages/Unauthorized";
 import Notfound from "./pages/Notfound";
+import ForgotPassword from "./pages/ForgotPassword";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import AuthWrapper from "./Utility/AuthWrapper";
@@ -24,6 +25,7 @@ function App() {
         <Route path="/feedback/:id" element={<AuthWrapper>{({ user }) => <SingleFeedBack user={user} />}</AuthWrapper>} />
         <Route path="/403" element={<Unauthorized />} />
         <Route path="/404" element={<Notfound />} />
+        <Route path="/forgotpassword" element={< ForgotPassword/>} />
       </Routes>
     </MantineProvider>
   );

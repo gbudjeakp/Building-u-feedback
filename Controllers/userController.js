@@ -3,7 +3,7 @@ const db = require("../Models/index");
 const bcrypt = require("bcrypt");
 const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
-const saltRounds = 10;
+const saltRounds = parseInt(process.env.SALT_ROUNDS);
 const Users = db.User;
 const ExerciseInfo = db.ExerciseInfo;
 const FeedbackRequest = db.FeedbackRequest;
@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
     // Hash the password
     // Ideally adding a callback in the hash is best practice
     //Might add callback as code
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword =  await bcrypt.hash(password, saltRounds);
     const userData = {
       fName: fName,
       username: userName,
@@ -173,7 +173,7 @@ const updateAccount = async (req, res) => {
       if (oldPassword === newPassword) {
         return res.status(400).json({ msg: 'Old password cannot be same as new password' });
       }
-      updates.password = await bcrypt.hash(newPassword, saltRounds);
+      updates.password = bcrypt.hash(newPassword, saltRounds);
     }
 
     await isUserExist.update(updates);
@@ -181,6 +181,8 @@ const updateAccount = async (req, res) => {
     // Since the full name is used in different tables and is called different names across tables, we are simply updating them below.
     if (fName) {
       await FeedbackRequest.update({ studentName: fName }, { where: { userId: id } });
+      await FeedbackRequest.update({ mentorId: id }, { where: { whoisAssigned: fName } });
+
       await ExerciseInfo.update({ internName: fName }, { where: { userId: id } });
       await Feedbacks.update({ mentorName: fName }, { where: { userId: id } });
     }

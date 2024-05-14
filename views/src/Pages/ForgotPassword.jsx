@@ -4,7 +4,7 @@ import Otpinput from "../components/Otpinput";
 import axios from "axios";
 
 function ForgotPassword() {
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(3);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
@@ -40,12 +40,12 @@ function ForgotPassword() {
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto" }}>
+    <div style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
       <Stepper
         active={active}
         onStepClick={setActive}
         allowNextStepsSelect={false}
-        color="yellow"
+        color="#F9EB02"
         sizes={{ xs: "md", sm: "lg" }}
       >
         <Stepper.Step label="First step" description="Create an account">
@@ -85,11 +85,11 @@ function ForgotPassword() {
       </Stepper>
 
       <Group style={{ marginTop: 20 }} position="center">
-        <Button variant="outline" onClick={prevStep} color="yellow">
+        <Button onClick={prevStep} color="#F9EB02">
           Back
         </Button>
         {(active === 0 && emailSubmitted) || (active === 1 && otpValidated) && (
-          <Button onClick={nextStep} color="yellow">
+          <Button onClick={nextStep} color="#F9EB02">
             Next step
           </Button>
         )}

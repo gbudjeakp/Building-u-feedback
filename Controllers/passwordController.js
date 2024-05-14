@@ -1,7 +1,7 @@
 require("dotenv").config();
 const db = require("../Models/index");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = parseInt(process.env.SALT_ROUNDS);
 const Users = db.User;
 const Token = db.Otptoken;
 const { tokenValidator } = require("./helpers/tokenValidator");
@@ -35,7 +35,7 @@ const sendToken = async (req, res) => {
 
   const otp = otpGenerator();
 
-  const hashedOtp = await bcrypt.hash(otp, saltRounds);
+  const hashedOtp =  await bcrypt.hash(otp, saltRounds);
   const expiresAt = new Date();
 
   if (!userInDB) {

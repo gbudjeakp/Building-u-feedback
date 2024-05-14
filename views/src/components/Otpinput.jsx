@@ -4,7 +4,7 @@ import { PinInput } from '@mantine/core';
 
 function Otpinput() {
   return (
-       <PinInput oneTimeCode />
+       <PinInput oneTimeCode inputMode="numeric"/>
   )
 }
 
